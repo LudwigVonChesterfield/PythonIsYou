@@ -17,86 +17,120 @@ class Game:
 
         self.words = {
             "BABA": {
-                "PART": set(["NOUN"]),
+                "PART": "NOUN",
             },
             "KEKE": {
-                "PART": set(["NOUN"]),
+                "PART": "NOUN",
             },
             "ALL": {
-                "PART": set(["NOUN"]),
-                "ACTION": {"NOUN": "ALL"},
+                "PART": "NOUN",
+                "ACTION": "ALL",
             },
             "NONE": {
-                "PART": set(["NOUN"]),
-                "ACTION": {"NOUN": "NONE"},
+                "PART": "NOUN",
+                "ACTION": "NONE",
             },
             "IS": {
-                "PART": set(["VERB"]),
+                "PART": "VERB",
+
                 "SIMPLIFICATION": [
                     {
                         "PRIORITY": 100,
-                        "LEFT": set(["NOUN"]),
-                        "RIGHT": set(["PROPERTY"]),
-                        "PART": set(["SENTENCE"]),
-                        "ACTION": {"SENTENCE": "GIVE"}
+                        "LEFT": "NOUN",
+                        "RIGHT": "PROPERTY",
+                        "PART": "SENTENCE",
+                        "ACTION": "GIVE"
                     },
                     {
                         "PRIORITY": 100.1,
-                        "LEFT": set(["NOUN"]),
-                        "RIGHT": set(["ADJECTIVE"]),
-                        "PART": set(["SENTENCE"]),
-                        "ACTION": {"SENTENCE": "GIVE"}
+                        "LEFT": "NOUN",
+                        "RIGHT": "ADJECTIVE",
+                        "PART": "SENTENCE",
+                        "ACTION": "GIVE"
                     }
                 ]
             },
             "NOT": {
-                "PART": set(["ADVERB"]),
+                "PART": "ADVERB",
                 "SIMPLIFICATION": [
                     {
-                        "PRIORITY": 0.1,
-                        "RIGHT": set(["NOUN", "PROPERTY", "ADJECTIVE"]),
+                        "PRIORITY": 0,
+                        "RIGHT": "NOUN",
                         "ACTION": "NEGATE",
                         "PART": "RIGHT"
+                    },
+                    {
+                        "PRIORITY": 0.1,
+                        "RIGHT": "PROPERTY",
+                        "ACTION": "NEGATE",
+                        "PART": "PROPERTY"
+                    },
+                    {
+                        "PRIORITY": 0.2,
+                        "RIGHT": "ADJECTIVE",
+                        "ACTION": "NEGATE",
+                        "PART": "ADJECTIVE"
                     },
                 ]
             },
             "AND": {
-                "PART": set(["CONJUNCTION"]),
+                "PART": "CONJUNCTION",
                 "SIMPLIFICATION": [
                     {
                         "PRIORITY": 10,
-                        "LEFT": set(["ADJECTIVE"]),
-                        "RIGHT": set(["ADJECTIVE"]),
-                        "PART": set(["ADJECTIVE"]),
-                        "ACTION": {"ADJECTIVE": "AND"}
+                        "LEFT": "ADJECTIVE",
+                        "RIGHT": "ADJECTIVE",
+                        "PART": "ADJECTIVE",
+                        "ACTION": "AND"
                     },
                     {
                         "PRIORITY": 10.1,
-                        "LEFT": set(["PROPERTY"]),
-                        "RIGHT": set(["PROPERTY"]),
-                        "PART": set(["PROPERTY"]),
-                        "ACTION": {"PROPERTY": "AND"}
+                        "LEFT": "PROPERTY",
+                        "RIGHT": "PROPERTY",
+                        "PART": "PROPERTY",
+                        "ACTION": "AND"
+                    },
+                    {
+                        "PRIORITY": 10.2,
+                        "LEFT": "PROPERTY",
+                        "RIGHT": "PROPERTY",
+                        "PART": "PROPERTY",
+                        "ACTION": "AND"
+                    },
+                    {
+                        "PRIORITY": 10.3,
+                        "LEFT": "PROPERTY",
+                        "RIGHT": "PROPERTY",
+                        "PART": "PROPERTY",
+                        "ACTION": "AND"
                     }
                 ]
             },
             "YOU": {
-                "PART": set(["PROPERTY"])
+                "PART": "PROPERTY",
             },
             "RED": {
-                "PART": set(["ADJECTIVE", "PROPERTY"])
+                "PART": "ADJECTIVE",
             }
         }
 
         self.parts = {
             "NOUN": {
                 "ACTION": "SELECT",
+                "SIMPLIFICATION": [
+                    {
+                        "PRIORITY": 1,
+                        "LEFT": "ADJECTIVE",
+                        "ACTION": "SPECIFY"
+                    }
+                ]
             },
             "VERB": {},
             "PROPERTY": {
                 "ACTION": "GET",
             },
             "ADJECTIVE": {
-                "ACTION": "SPECIFY",
+                "ACTION": "GET",
             },
             "ADVERB": {},
             "CONJUNCTION": {},
@@ -152,7 +186,7 @@ class Game:
 
     def apply_rule(self, rule):
         # TO-DO: support complex actions.
-        self.primitive_act(self.get_action(rule), rule, ents=self.entities)
+        self.primitive_act(rule["ACTION"], rule, ents=self.entities)
 
     def update_rules():
         for rule in self.rules:
@@ -175,19 +209,13 @@ class Game:
                 "LEFT": None,
                 "RIGHT": None,
                 "ROOT": None,
+                "ACTION": self.words[t].get(
+                    "ACTION", self.parts[self.words[t]["PART"]].get("ACTION", None)
+                ),
                 "SIMPLIFICATION": self.words[t].get("SIMPLIFICATION", [])
             }
             for t in txt.split(" ")
         ]
-
-        for token in tokens:
-            token["ACTION"] = {}
-            for part in token["PART"]:
-                token["ACTION"][part] = self.parts[part].get("ACTION", None)
-            if "ACTION" in self.words[token["TEXT"]].keys():
-                acts = self.words[token["TEXT"]]["ACTION"]
-                for part, action in acts.items():
-                    token["ACTION"][part] = action
 
         prev = None
         for i in range(len(tokens)):
@@ -206,27 +234,18 @@ class Game:
         all_simplifications.extend(
             token.get("SIMPLIFICATION", [])
         )
-        for part in token["PART"]:
-            all_simplifications.extend(
-                self.parts[part].get("SIMPLIFICATION", [])
-            )
+        all_simplifications.extend(
+            self.parts[token["PART"]].get("SIMPLIFICATION", [])
+        )
 
         pos_simplifications = []
         for simp in all_simplifications:
             left = simp.get("LEFT", None)
             right = simp.get("RIGHT", None)
 
-            left_inter = None
-            right_inter = None
-
-            if left is not None and token["LEFT"] is not None:
-                left_inter = left.intersection(token["LEFT"]["PART"])
-            if right is not None and token["RIGHT"] is not None:
-                right_inter = right.intersection(token["RIGHT"]["PART"])
-
-            if left_inter is not None and len(left_inter) == 0:
+            if left is not None and (token["LEFT"] is None or token["LEFT"]["PART"] != left):
                 continue
-            if right_inter is not None and len(right_inter) == 0:
+            if right is not None and (token["RIGHT"] is None or token["RIGHT"]["PART"] != right):
                 continue
 
             pos_simplifications.append((simp["PRIORITY"], simp))
@@ -250,30 +269,18 @@ class Game:
         if new_part == "RIGHT":
             new_part = token["RIGHT"]["PART"]
 
-        if type(new_action) is str:
-            a = {}
-            for part in new_part:
-                a[part] = new_action
-            new_action = a
-
         new_left = token["LEFT"]
         new_right = token["RIGHT"]
 
         if "LEFT" in simp.keys():
             new_token["TEXT"] += token["LEFT"]["TEXT"] + " "
             new_left = token["LEFT"]["LEFT"]
-            token["LEFT"]["PART"] = simp["LEFT"].intersection(token["LEFT"]["PART"])
-            # Simple trick to help determine root elements.
-            token["LEFT"]["LEFT"] = None
 
         new_token["TEXT"] += token["TEXT"]
 
         if "RIGHT" in simp.keys():
             new_token["TEXT"] += " " + token["RIGHT"]["TEXT"]
             new_right = token["RIGHT"]["RIGHT"]
-            token["RIGHT"]["PART"] = simp["RIGHT"].intersection(token["RIGHT"]["PART"])
-            # Simple trick to help determine root elements.
-            token["RIGHT"]["RIGHT"] = None
 
         new_token["PART"] = new_part
         new_token["ACTION"] = new_action
@@ -339,11 +346,6 @@ class Game:
 
         return tokens
 
-    def get_action(self, token, part=None):
-        if part is None:
-            part = list(token["PART"])[0]
-        return token["ACTION"][part]
-
     def cols_from(self, tokens, cols):
         def get_from_col(t, col):
             if type(col) is str:
@@ -363,23 +365,3 @@ class Game:
             ])
             for t in tokens
         ]
-
-    """
-    def get_root_tokens(self, tokens, prev=None):
-        roots = []
-        for token in tokens:
-            if token["ROOT"] is None:
-                roots.append(token)
-
-                walk_through = [token["LEFT"], token["RIGHT"]]
-                walk_through = [t for t in walk_through if t != prev and t is not None]
-
-                for t in self.get_root_tokens(walk_through, prev=token):
-                    roots.append(t)
-
-                continue
-
-            for t in self.get_root_tokens([token["ROOT"]], prev=token):
-                roots.append(t)
-        return roots
-    """

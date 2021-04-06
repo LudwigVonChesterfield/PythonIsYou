@@ -37,12 +37,12 @@ class Primitive_Actions:
     @classmethod
     def GIVE(cls, game, entities, token):
         selected = game.primitive_act(
-            game.get_action(token["ROOT"]["LEFT"]),
+            token["ROOT"]["LEFT"]["ACTION"],
             token["ROOT"]["LEFT"],
             ents=entities
         )
         properties = game.primitive_act(
-            game.get_action(token["ROOT"]["RIGHT"]),
+            token["ROOT"]["RIGHT"]["ACTION"],
             token["ROOT"]["RIGHT"],
             ents=entities
         )
@@ -54,12 +54,12 @@ class Primitive_Actions:
     @classmethod
     def AND(cls, game, entities, token):
         first = game.primitive_act(
-            game.get_action(token["ROOT"]["LEFT"]),
+            token["ROOT"]["LEFT"]["ACTION"],
             token["ROOT"]["LEFT"],
             ents=entities
         )
         second = game.primitive_act(
-            game.get_action(token["ROOT"]["RIGHT"]),
+            token["ROOT"]["RIGHT"]["ACTION"],
             token["ROOT"]["RIGHT"],
             ents=entities
         )
@@ -69,18 +69,18 @@ class Primitive_Actions:
 
     @classmethod
     def NEGATE(cls, game, entities, token):
-        if game.get_action(token["ROOT"]["RIGHT"], list(token["PART"])[0]) == "GET":
+        if token["ROOT"]["RIGHT"]["ACTION"] == "GET":
             return [
                 "NOT " + t
                 for t in game.primitive_act(
-                    game.get_action(token["ROOT"]["RIGHT"]),
+                    token["ROOT"]["RIGHT"]["ACTION"],
                     token["ROOT"]["RIGHT"],
                     ents=entities
                 )
             ]
-        if game.get_action(token["ROOT"]["RIGHT"], list(token["PART"])[0]) == "NEGATE":
+        if token["ROOT"]["RIGHT"]["ACTION"] == "NEGATE":
             return game.primitive_act(
-                game.get_action(token["ROOT"]["RIGHT"]["ROOT"]["RIGHT"]),
+                token["ROOT"]["RIGHT"]["ROOT"]["RIGHT"]["ACTION"],
                 token["ROOT"]["RIGHT"]["ROOT"]["RIGHT"],
                 ents=entities
             )
@@ -88,7 +88,7 @@ class Primitive_Actions:
         return [
             t
             for t in game.primitive_act(
-                game.get_action(token["ROOT"]["RIGHT"]),
+                token["ROOT"]["RIGHT"]["ACTION"],
                 token["ROOT"]["RIGHT"],
                 ents=entities
             )
