@@ -78,16 +78,16 @@ class Game:
                 "SIMPLIFICATION": [
                     {
                         "PRIORITY": 10,
-                        "LEFT": "ADJECTIVE",
-                        "RIGHT": "ADJECTIVE",
-                        "PART": "ADJECTIVE",
+                        "LEFT": "NOUN",
+                        "RIGHT": "NOUN",
+                        "PART": "NOUN",
                         "ACTION": "AND"
                     },
                     {
                         "PRIORITY": 10.1,
-                        "LEFT": "PROPERTY",
-                        "RIGHT": "PROPERTY",
-                        "PART": "PROPERTY",
+                        "LEFT": "ADJECTIVE",
+                        "RIGHT": "ADJECTIVE",
+                        "PART": "ADJECTIVE",
                         "ACTION": "AND"
                     },
                     {
@@ -100,6 +100,13 @@ class Game:
                     {
                         "PRIORITY": 10.3,
                         "LEFT": "PROPERTY",
+                        "RIGHT": "ADJECTIVE",
+                        "PART": "PROPERTY",
+                        "ACTION": "AND"
+                    },
+                    {
+                        "PRIORITY": 10.4,
+                        "LEFT": "ADJECTIVE",
                         "RIGHT": "PROPERTY",
                         "PART": "PROPERTY",
                         "ACTION": "AND"
