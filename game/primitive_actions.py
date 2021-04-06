@@ -21,13 +21,13 @@ class Primitive_Actions:
             return [
                 entity for entity
                 in cls.SELECT(game, entities, token["ROOT"])
-                if token["LEFT"]["TEXT"] in entity["IS"]
+                if token["ROOT"]["LEFT"]["TEXT"] in entity["IS"]
             ]
 
         return [
             entity for entity
             in cls.SPECIFY(game, entities, token["ROOT"])
-            if token["LEFT"]["TEXT"] in entity["IS"]
+            if token["ROOT"]["LEFT"]["TEXT"] in entity["IS"]
         ]
 
     @classmethod
@@ -85,12 +85,13 @@ class Primitive_Actions:
                 ents=entities
             )
 
+        not_entities = game.primitive_act(
+            token["ROOT"]["RIGHT"]["ACTION"],
+            token["ROOT"]["RIGHT"],
+            ents=entities
+        )
         return [
             t
-            for t in game.primitive_act(
-                token["ROOT"]["RIGHT"]["ACTION"],
-                token["ROOT"]["RIGHT"],
-                ents=entities
-            )
-            if t not in entities
+            for t in entities
+            if t not in not_entities
         ]

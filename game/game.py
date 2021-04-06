@@ -54,19 +54,19 @@ class Game:
                 "PART": "ADVERB",
                 "SIMPLIFICATION": [
                     {
-                        "PRIORITY": 0,
+                        "PRIORITY": 1,
                         "RIGHT": "NOUN",
                         "ACTION": "NEGATE",
                         "PART": "RIGHT"
                     },
                     {
-                        "PRIORITY": 0.1,
+                        "PRIORITY": 1.1,
                         "RIGHT": "PROPERTY",
                         "ACTION": "NEGATE",
                         "PART": "PROPERTY"
                     },
                     {
-                        "PRIORITY": 0.2,
+                        "PRIORITY": 1.2,
                         "RIGHT": "ADJECTIVE",
                         "ACTION": "NEGATE",
                         "PART": "ADJECTIVE"
@@ -119,8 +119,9 @@ class Game:
                 "ACTION": "SELECT",
                 "SIMPLIFICATION": [
                     {
-                        "PRIORITY": 1,
+                        "PRIORITY": 0,
                         "LEFT": "ADJECTIVE",
+                        "PART": "NOUN",
                         "ACTION": "SPECIFY"
                     }
                 ]
