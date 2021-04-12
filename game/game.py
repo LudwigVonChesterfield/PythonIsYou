@@ -12,8 +12,11 @@ thus: make action associative word["ACTION"][part] -> action
 
 
 class Game:
-    def __init__(self, debug=False):
+    def __init__(self, debug=False, debug_options={}):
         self.debug = debug
+        self.debug_options = debug_options
+
+        self.rules = []
 
         self.words = {
             "BABA": {
@@ -118,6 +121,9 @@ class Game:
             },
             "RED": {
                 "PART": "ADJECTIVE",
+            },
+            "BLUE": {
+                "PART": "ADJECTIVE"
             }
         }
 
@@ -196,13 +202,29 @@ class Game:
         # TO-DO: support complex actions.
         self.primitive_act(rule["ACTION"], rule, ents=self.entities)
 
-    def update_rules():
+    def update_rules(self):
         for rule in self.rules:
             self.apply_rule(rule)
 
+    def update_meta_rules(self):
+        for entity in self.entities:
+            props = set(entity["IS"])
+            new_props = set([])
+            for prop in entity["IS"]:
+                if "NOT " + prop in entity["IS"]:
+                    continue
+                if prop.startswith("NOT "):
+                    continue
+                new_props.add(prop)
+            entity["IS"] = new_props
+
     def add_rule(self, rule):
+        if type(rule) is str:
+            rule = self.get_rule(rule)
+
         self.rules.append(rule)
         self.update_rules()
+        self.update_meta_rules()
 
     def primitive_act(self, action, token, ents=None):
         if ents is None:
@@ -336,21 +358,18 @@ class Game:
 
         return new_tokens, False
 
-    def treeify(self, tokens, tries=5):
+    def treeify(self, tokens):
         done = False
-        i = 0
 
-        while not done and i < tries:
+        while not done:
             if self.debug:
                 print(
                     self.cols_from(
                         tokens,
-                        ["TEXT", "PART", "ACTION"]
+                        self.debug_options["PRINT_TREEIFY_KEYS"]
                     )
                 )
             tokens, done = self.simplify(tokens)
-
-            i += 1
 
         return tokens
 

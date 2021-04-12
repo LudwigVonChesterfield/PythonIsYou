@@ -1,15 +1,31 @@
 import game.game as g
 
-game = g.Game(debug=True)
+game = g.Game(
+    debug=True,
+    debug_options={
+        "PRINT_TREEIFY_KEYS": ["TEXT"]
+    }
+)
+game.entities.append(
+    {
+        "TEXT": "BABA",
+        "IS": set(["RED"]),
+        "HAS": []
+    }
+)
 
-r1 = game.get_rule("BABA IS YOU AND RED")
+r1 = game.get_rule("NOT BABA IS YOU")
 
 print(
     game.cols_from(
         [r1],
-        ["TEXT", "PART", "ACTION"]
+        ["TEXT"]
     )
 )
 
-game.apply_rule(r1)
-print(game.entities)
+game.add_rule(r1)
+
+"""
+while True:
+    game.update_rules()
+"""

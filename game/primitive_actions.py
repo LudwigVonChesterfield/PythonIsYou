@@ -65,6 +65,7 @@ class Primitive_Actions:
         )
 
         first.extend(second)
+
         return first
 
     @classmethod

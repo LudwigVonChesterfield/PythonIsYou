@@ -25,32 +25,73 @@ class BasicComprehensionTest(unittest.TestCase):
         ]
 
     def test_baba_is_you(self):
-        r1 = self.game.get_rule("BABA IS YOU")
-        self.game.apply_rule(r1)
+        r1 = self.game.add_rule("BABA IS YOU")
 
         baba = self.game.entities[0]
         keke = self.game.entities[1]
         red_baba = self.game.entities[2]
 
         self.assertIn("YOU", baba["IS"], "BABA IS NOT YOU")
+        self.assertNotIn("YOU", keke["IS"], "KEKE IS YOU")
+        self.assertIn("YOU", red_baba["IS"], "RED BABA IS NOT YOU")
+
+    def test_keke_is_you(self):
+        r1 = self.game.add_rule("KEKE IS YOU")
+
+        baba = self.game.entities[0]
+        keke = self.game.entities[1]
+        red_baba = self.game.entities[2]
+
+        self.assertNotIn("YOU", baba["IS"], "BABA IS YOU")
+        self.assertIn("YOU", keke["IS"], "KEKE IS NOT YOU")
+        self.assertNotIn("YOU", red_baba["IS"], "RED BABA IS YOU")
+
+    def test_baba_is_red(self):
+        r1 = self.game.add_rule("BABA IS RED")
+
+        baba = self.game.entities[0]
+        keke = self.game.entities[1]
+        red_baba = self.game.entities[2]
+
+        self.assertIn("RED", baba["IS"], "BABA IS NOT RED")
+        self.assertNotIn("RED", keke["IS"], "KEKE IS RED")
+        self.assertIn("RED", red_baba["IS"], "RED BABA IS NOT RED")
+
+    def test_red_baba_is_you(self):
+        r1 = self.game.add_rule("RED BABA IS YOU")
+
+        baba = self.game.entities[0]
+        keke = self.game.entities[1]
+        red_baba = self.game.entities[2]
+
+        self.assertNotIn("YOU", baba["IS"], "BABA IS YOU")
         self.assertNotIn("YOU", keke["IS"], "KEKE IS YOU")
         self.assertIn("YOU", red_baba["IS"], "RED BABA IS NOT YOU")
 
     def test_baba_is_not_you(self):
-        r1 = self.game.get_rule("BABA IS NOT YOU")
-        self.game.apply_rule(r1)
+        r1 = self.game.add_rule("BABA IS NOT YOU")
 
         baba = self.game.entities[0]
         keke = self.game.entities[1]
         red_baba = self.game.entities[2]
 
-        self.assertIn("NOT YOU", baba["IS"], "BABA IS YOU")
-        self.assertNotIn("NOT YOU", keke["IS"], "KEKE IS NOT YOU")
-        self.assertIn("NOT YOU", red_baba["IS"], "RED BABA IS YOU")
+        self.assertNotIn("YOU", baba["IS"], "BABA IS YOU")
+        self.assertNotIn("YOU", keke["IS"], "KEKE IS YOU")
+        self.assertNotIn("YOU", red_baba["IS"], "RED BABA IS YOU")
+
+    def test_baba_is_not_red(self):
+        r1 = self.game.add_rule("BABA IS NOT RED")
+
+        baba = self.game.entities[0]
+        keke = self.game.entities[1]
+        red_baba = self.game.entities[2]
+
+        self.assertNotIn("RED", baba["IS"], "BABA IS RED")
+        self.assertNotIn("RED", keke["IS"], "KEKE IS RED")
+        self.assertNotIn("RED", red_baba["IS"], "RED BABA IS RED")
 
     def test_not_baba_is_you(self):
-        r1 = self.game.get_rule("NOT BABA IS YOU")
-        self.game.apply_rule(r1)
+        r1 = self.game.add_rule("NOT BABA IS YOU")
 
         baba = self.game.entities[0]
         keke = self.game.entities[1]
@@ -59,34 +100,9 @@ class BasicComprehensionTest(unittest.TestCase):
         self.assertNotIn("YOU", baba["IS"], "BABA IS YOU")
         self.assertIn("YOU", keke["IS"], "KEKE IS NOT YOU")
         self.assertNotIn("YOU", red_baba["IS"], "RED BABA IS YOU")
-
-    def test_not_baba_is_not_you(self):
-        r1 = self.game.get_rule("NOT BABA IS NOT YOU")
-        self.game.apply_rule(r1)
-
-        baba = self.game.entities[0]
-        keke = self.game.entities[1]
-        red_baba = self.game.entities[2]
-
-        self.assertNotIn("NOT YOU", baba["IS"], "BABA IS NOT YOU")
-        self.assertIn("NOT YOU", keke["IS"], "KEKE IS NOT NOT YOU")
-        self.assertNotIn("NOT YOU", red_baba["IS"], "RED BABA IS NOT YOU")
-
-    def test_red_baba_is_you(self):
-        r1 = self.game.get_rule("RED BABA IS YOU")
-        self.game.apply_rule(r1)
-
-        baba = self.game.entities[0]
-        keke = self.game.entities[1]
-        red_baba = self.game.entities[2]
-
-        self.assertNotIn("YOU", baba["IS"], "BABA IS YOU")
-        self.assertNotIn("YOU", keke["IS"], "KEKE IS YOU")
-        self.assertIn("YOU", red_baba["IS"], "RED BABA IS NOT YOU")
 
     def test_not_red_baba_is_you(self):
-        r1 = self.game.get_rule("NOT RED BABA IS YOU")
-        self.game.apply_rule(r1)
+        r1 = self.game.add_rule("NOT RED BABA IS YOU")
 
         baba = self.game.entities[0]
         keke = self.game.entities[1]
@@ -96,33 +112,19 @@ class BasicComprehensionTest(unittest.TestCase):
         self.assertIn("YOU", keke["IS"], "KEKE IS NOT YOU")
         self.assertNotIn("YOU", red_baba["IS"], "RED BABA IS YOU")
 
-    def test_baba_and_keke_is_you(self):
-        r1 = self.game.get_rule("BABA AND KEKE IS YOU")
-        self.game.apply_rule(r1)
+    def test_not_keke_is_not_you(self):
+        r1 = self.game.add_rule("NOT KEKE IS NOT YOU")
 
         baba = self.game.entities[0]
         keke = self.game.entities[1]
         red_baba = self.game.entities[2]
 
-        self.assertIn("YOU", baba["IS"], "BABA IS NOT YOU")
-        self.assertIn("YOU", keke["IS"], "KEKE IS NOT YOU")
-        self.assertIn("YOU", red_baba["IS"], "RED BABA IS NOT YOU")
+        self.assertNotIn("YOU", baba["IS"], "BABA IS YOU")
+        self.assertNotIn("YOU", keke["IS"], "KEKE IS YOU")
+        self.assertNotIn("YOU", red_baba["IS"], "RED BABA IS YOU")
 
-    def test_keke_and_baba_is_you(self):
-        r1 = self.game.get_rule("KEKE AND BABA IS YOU")
-        self.game.apply_rule(r1)
-
-        baba = self.game.entities[0]
-        keke = self.game.entities[1]
-        red_baba = self.game.entities[2]
-
-        self.assertIn("YOU", baba["IS"], "BABA IS NOT YOU")
-        self.assertIn("YOU", keke["IS"], "KEKE IS NOT YOU")
-        self.assertIn("YOU", red_baba["IS"], "RED BABA IS NOT YOU")
-
-    def test_baba_and_not_keke_is_you(self):
-        r1 = self.game.get_rule("BABA AND NOT KEKE IS YOU")
-        self.game.apply_rule(r1)
+    def test_baba_is_not_not_you(self):
+        r1 = self.game.add_rule("BABA IS NOT NOT YOU")
 
         baba = self.game.entities[0]
         keke = self.game.entities[1]
@@ -132,33 +134,63 @@ class BasicComprehensionTest(unittest.TestCase):
         self.assertNotIn("YOU", keke["IS"], "KEKE IS YOU")
         self.assertIn("YOU", red_baba["IS"], "RED BABA IS NOT YOU")
 
-    def test_not_red_baba_and_keke_is_you(self):
-        r1 = self.game.get_rule("NOT RED BABA AND KEKE IS YOU")
-        self.game.apply_rule(r1)
+    def test_baba_is_not_not_not_you(self):
+        r1 = self.game.add_rule("BABA IS NOT NOT NOT YOU")
+
+        baba = self.game.entities[0]
+        keke = self.game.entities[1]
+        red_baba = self.game.entities[2]
+
+        self.assertNotIn("YOU", baba["IS"], "BABA IS YOU")
+        self.assertNotIn("YOU", keke["IS"], "KEKE IS YOU")
+        self.assertNotIn("YOU", red_baba["IS"], "RED BABA IS YOU")
+
+    def test_baba_is_not_not_not_not_you(self):
+        r1 = self.game.add_rule("BABA IS NOT NOT NOT NOT YOU")
 
         baba = self.game.entities[0]
         keke = self.game.entities[1]
         red_baba = self.game.entities[2]
 
         self.assertIn("YOU", baba["IS"], "BABA IS NOT YOU")
+        self.assertNotIn("YOU", keke["IS"], "KEKE IS YOU")
+        self.assertIn("YOU", red_baba["IS"], "RED BABA IS NOT YOU")
+
+    def test_not_not_baba_is_you(self):
+        r1 = self.game.add_rule("NOT NOT BABA IS YOU")
+
+        baba = self.game.entities[0]
+        keke = self.game.entities[1]
+        red_baba = self.game.entities[2]
+
+        self.assertIn("YOU", baba["IS"], "BABA IS NOT YOU")
+        self.assertNotIn("YOU", keke["IS"], "KEKE IS YOU")
+        self.assertIn("YOU", red_baba["IS"], "RED BABA IS NOT YOU")
+
+    def test_not_not_not_baba_is_you(self):
+        r1 = self.game.add_rule("NOT NOT NOT BABA IS YOU")
+
+        baba = self.game.entities[0]
+        keke = self.game.entities[1]
+        red_baba = self.game.entities[2]
+
+        self.assertNotIn("YOU", baba["IS"], "BABA IS YOU")
         self.assertIn("YOU", keke["IS"], "KEKE IS NOT YOU")
         self.assertNotIn("YOU", red_baba["IS"], "RED BABA IS YOU")
 
-    def test_not_baba_and_not_keke_is_you(self):
-        r1 = self.game.get_rule("NOT BABA AND NOT KEKE IS YOU")
-        self.game.apply_rule(r1)
+    def test_not_not_not_not_baba_is_you(self):
+        r1 = self.game.add_rule("NOT NOT NOT NOT BABA IS YOU")
 
         baba = self.game.entities[0]
         keke = self.game.entities[1]
         red_baba = self.game.entities[2]
 
         self.assertIn("YOU", baba["IS"], "BABA IS NOT YOU")
-        self.assertIn("YOU", keke["IS"], "KEKE IS NOT YOU")
+        self.assertNotIn("YOU", keke["IS"], "KEKE IS YOU")
         self.assertIn("YOU", red_baba["IS"], "RED BABA IS NOT YOU")
 
     def test_baba_is_you_and_red(self):
-        r1 = self.game.get_rule("BABA IS YOU AND RED")
-        self.game.apply_rule(r1)
+        r1 = self.game.add_rule("BABA IS YOU AND RED")
 
         baba = self.game.entities[0]
         keke = self.game.entities[1]
@@ -173,8 +205,7 @@ class BasicComprehensionTest(unittest.TestCase):
         self.assertIn("RED", red_baba["IS"], "RED BABA IS NOT RED")
 
     def test_baba_is_you_and_not_red(self):
-        r1 = self.game.get_rule("BABA IS YOU AND NOT RED")
-        self.game.apply_rule(r1)
+        r1 = self.game.add_rule("BABA IS YOU AND NOT RED")
 
         baba = self.game.entities[0]
         keke = self.game.entities[1]
@@ -184,60 +215,35 @@ class BasicComprehensionTest(unittest.TestCase):
         self.assertNotIn("YOU", keke["IS"], "KEKE IS YOU")
         self.assertIn("YOU", red_baba["IS"], "RED BABA IS NOT YOU")
 
-        self.assertIn("NOT RED", baba["IS"], "BABA IS NOT NOT RED")
-        self.assertNotIn("NOT RED", keke["IS"], "KEKE IS NOT RED")
-        self.assertIn("NOT RED", red_baba["IS"], "RED BABA IS NOT NOT RED")
+        self.assertNotIn("RED", baba["IS"], "BABA IS RED")
+        self.assertNotIn("RED", keke["IS"], "KEKE IS RED")
+        self.assertNotIn("RED", red_baba["IS"], "RED BABA IS RED")
 
-    def test_baba_is_you_and_not_you(self):
-        r1 = self.game.get_rule("BABA IS YOU AND NOT YOU")
-        self.game.apply_rule(r1)
+    def test_baba_is_you_and_not_red(self):
+        r1 = self.game.add_rule("BABA IS YOU AND NOT RED")
 
         baba = self.game.entities[0]
         keke = self.game.entities[1]
         red_baba = self.game.entities[2]
 
-        self.assertNotIn("YOU", baba["IS"], "BABA IS YOU")
-        self.assertNotIn("YOU", keke["IS"], "KEKE IS YOU")
-        self.assertNotIn("YOU", red_baba["IS"], "RED BABA IS YOU")
-
-        self.assertIn("NOT YOU", baba["IS"], "BABA IS RED")
-        self.assertIn("NOT YOU", keke["IS"], "KEKE IS NOT YOU")
-        self.assertIn("NOT YOU", red_baba["IS"], "RED BABA IS RED")
-
-    def test_baba_is_not_not_you(self):
-        r1 = self.game.get_rule("BABA IS NOT NOT YOU")
-        self.game.apply_rule(r1)
-
-        baba = self.game.entities[0]
-        red_baba = self.game.entities[2]
-
         self.assertIn("YOU", baba["IS"], "BABA IS NOT YOU")
+        self.assertNotIn("YOU", keke["IS"], "KEKE IS YOU")
         self.assertIn("YOU", red_baba["IS"], "RED BABA IS NOT YOU")
 
-        self.assertNotIn("NOT YOU", baba["IS"], "BABA IS NOT RED")
-        self.assertNotIn("NOT YOU", red_baba["IS"], "RED BABA IS NOT RED")
+        self.assertNotIn("RED", baba["IS"], "BABA IS RED")
+        self.assertNotIn("RED", keke["IS"], "KEKE IS RED")
+        self.assertNotIn("RED", red_baba["IS"], "RED BABA IS RED")
 
-        self.assertNotIn("NOT NOT YOU", baba["IS"], "BABA IS NOT NOT RED")
-        self.assertNotIn("NOT NOT YOU", red_baba["IS"], "RED BABA IS NOT NOT RED")
-
-    def test_baba_is_not_not_not_you(self):
-        r1 = self.game.get_rule("BABA IS NOT NOT NOT YOU")
-        self.game.apply_rule(r1)
+    def test_baba_and_keke_is_red(self):
+        r1 = self.game.add_rule("BABA AND KEKE IS RED")
 
         baba = self.game.entities[0]
+        keke = self.game.entities[1]
         red_baba = self.game.entities[2]
 
-        self.assertNotIn("YOU", baba["IS"], "BABA IS YOU")
-        self.assertNotIn("YOU", red_baba["IS"], "RED BABA IS YOU")
-
-        self.assertIn("NOT YOU", baba["IS"], "BABA IS NOT NOT RED")
-        self.assertIn("NOT YOU", red_baba["IS"], "RED BABA IS NOT NOT RED")
-
-        self.assertNotIn("NOT NOT YOU", baba["IS"], "BABA IS NOT NOT RED")
-        self.assertNotIn("NOT NOT YOU", red_baba["IS"], "RED BABA IS NOT NOT RED")
-
-        self.assertNotIn("NOT NOT NOT YOU", baba["IS"], "BABA IS NOT NOT NOT RED")
-        self.assertNotIn("NOT NOT NOT YOU", red_baba["IS"], "RED BABA IS NOT NOT NOT RED")
+        self.assertIn("RED", baba["IS"], "BABA IS NOT RED")
+        self.assertIn("RED", keke["IS"], "KEKE IS NOT RED")
+        self.assertIn("RED", red_baba["IS"], "RED BABA IS NOT RED")
 
 
 if __name__ == "__main__":
